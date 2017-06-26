@@ -1,8 +1,5 @@
 
-# ARREGLAR DATOS SIN DELIMITADOR ----------------------------------------------------
-
-
-# Descargar queries de Salesforce
+# DESCARGAR INFORMACIÓN DE OBJETOS ----------------------------------------
 
 ## Login a Salesforce
 library(RForcecom)
@@ -12,21 +9,29 @@ instanceURL <- "https://taroworks-8629.cloudforce.com/"
 apiVersion <- "36.0"
 session <- rforcecom.login(username, password, instanceURL, apiVersion)
 
-## Descargar datos
+## Información de objetos de contenidos
+objetosCont <- c("Menu__c", "Menu_item__c", "Search_log__c")
+num.objetosCont <- length(objetosCont)
+
+for(i in 1:num.objetosCont) {
+  assign(objetosCont[i], 
+         rforcecom.getObjectDescription(session, objetosCont[i]))
+}
+
+## Datos de objetos
+# Menu y menu items: https://taroworks-8629.cloudforce.com/00O36000007E0d8
+
+
+# INCLUIR DELIMITADOR EN QUERIES EXISTENTES -------------------------------
+
+
+## Descargar queries
 fields <- c("Id", "Query__c")
 queries.1 <- rforcecom.retrieve(session, "Search_Log__c", fields)
 
+## Descargar contenidos
 
 
-# INCLUIR DELIMITADORES EN CONTENIDOS SUBIDOS ---------------------------------------
+# SEPARAR NIVELES Y SUBIR A NUEVO OBJETO ----------------------------------
 
 
-
-# Incluir separador de niveles en queries
-
-
-
-# Descargar Contenidos
-
-
-# Agregar sperador al final de todos los registros (menos último nivel)
