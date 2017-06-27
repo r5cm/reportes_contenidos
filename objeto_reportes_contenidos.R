@@ -1,4 +1,3 @@
-
 # DESCARGAR INFORMACIÓN DE OBJETOS ----------------------------------------
 
 ## Login a Salesforce
