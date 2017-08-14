@@ -32,16 +32,13 @@ search_log <- rforcecom.retrieve(session, objetosCont[3], md.Search_log__c$name)
 menu$Label__c <- gsub(".", "", menu$Label__c, fixed = TRUE)
 menu_item$Label__c <- gsub(".", "", menu_item$Label__c, fixed = TRUE)
 
-# Crear lista con menus y menu items
-temas <- c(menu$Label__c, menu_item$Label__c)
-
 # Contar registros con caracteres especiales
-table(grepl("\uFFFD", search_log$Query__c))
+table(grepl("\UFFFD", search_log$Query__c))
 
 # Crear lista con forma correcta e incorrecta
 correctas <- read.csv("palabras_correctas.csv")
 
-# Utilizar lista anterior para corregir queries
+# Primera corrección: Utilizar lista anterior para corregir queries
 search_log$Query__c <- gsub("�", "<U+FFFD>", search_log$Query__c)
 
 for (i in 1:nrow(search_log)) {
@@ -53,12 +50,27 @@ for (i in 1:nrow(search_log)) {
       }
 }
 
+# Segunda corrección: corregir las que quedaron mal
+
+
 
 
 # Separar queries en columnas ---------------------------------------------
 
+# Crear lista con menus y menu items (e identificador de objeto)
+temas <- rbind(data.frame(tipo = rep("Menu", nrow(menu)), 
+                          tema = menu$Label__c),
+               data.frame(tipo = rep("Menu item", nrow(menu_item)),
+                          tema = menu_item$Label__c))
+
+# Ordenar temas en niveles
+nivel <- ifelse(temas$tipo == "Menu", 0,
+                )
+
+# Crear lista de temas únicos, para utilizar en regexpr
+temas.unicos <- unique(temas$tema)
+
 x <- vector(mode = "list", length = nrow(search_log))
-temas.unicos <- unique(temas)
 
 for (i in seq_along(search_log$Query__c)) {
       for(j in seq_along(temas.unicos)) {         
@@ -71,9 +83,23 @@ for (i in seq_along(search_log$Query__c)) {
 # ESTO HAY QUE REVISARLO BIEN PORQUE EL PRIMER QUERY ESTÁ DANDO
 # DIFERENTE AL PRIMER ELEMENTO DE LA LISTA
 
-i <- 1
-j <- 190
 
+
+# Guardar objetos
+saveRDS(correctas, "correctas.rds")
+saveRDS(menu, "menu.rds")
+saveRDS(menu_item, "menu_item.rds")
+saveRDS(queries, "queries.rds")
+saveRDS(search_log, "search_log.rds")
+saveRDS(temas, "temas.rds")
+
+# Cargar objetos
+correctas <- readRDS("correctas.rds")
+menu <- readRDS("menu.rds")
+menu_item <- readRDS("menu_item.rds")
+queries <- readRDS("queries.rds")
+search_log <- readRDS("search_log.rds")
+temas <- readRDS("temas.rds")
 
 
 
